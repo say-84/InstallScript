@@ -166,6 +166,7 @@ sudo su $OE_USER -c "mkdir $OE_HOME/extra/addons"
 echo -e "\n======= Setting permissions on home folder =========="
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/
 echo -e "\n========== Create server config file ============="
+sudo mkdir /etc/odoo
 sudo touch /etc/odoo/${OE_CONFIG}.conf
 echo -e "\n============= Creating server config file ==========="
 sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/odoo/${OE_CONFIG}.conf"
