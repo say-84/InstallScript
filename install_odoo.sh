@@ -380,13 +380,13 @@ fi
 #--------------------------------------------------
 # Enable ssl with certbot
 #--------------------------------------------------
-if [ $INSTALL_NGINX = "True" ] && [ $ENABLE_SSL = "True" ]  && [ $WEBSITE_NAME != "b.marveel@gmail.com" ];then
+if [ $INSTALL_NGINX = "True" ] && [ $ENABLE_SSL = "True" ];then
   sudo apt-get remove certbot
   sudo snap install core
   sudo snap refresh core
   sudo snap install --classic certbot
   sudo ln -s /snap/bin/certbot /usr/bin/certbot
-  sudo certbot --nginx -d $WEBSITE_NAME 
+  sudo certbot --nginx -d $DOMAIN_NAME 
   sudo systemctl reload nginx  
   echo "\n============ SSL/HTTPS is enabled! ========================"
 else
