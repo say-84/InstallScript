@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ################################################################################
 # Script for installing Odoo on Ubuntu 22.04 LTS (could be used for other version too)
 # Author: Henry Robert Muwanika
@@ -16,7 +15,6 @@
 # Execute the script to install Odoo:
 # ./install_odoo_ubuntu.sh
 ################################################################################
-
 OE_USER="odoo"
 OE_HOME="/$OE_USER"
 OE_HOME_EXT="/$OE_USER/${OE_USER}"
@@ -47,7 +45,6 @@ LONGPOLLING_PORT="8072"
 ENABLE_SSL="True"
 # Provide Email to register ssl certificate
 ADMIN_EMAIL="b.marveel@gmail.com"
-
 ###
 #----------------------------------------------------
 # Disable password authentication
@@ -56,7 +53,6 @@ sudo sed -i 's/#ChallengeResponseAuthentication yes/ChallengeResponseAuthenticat
 sudo sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config 
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 sudo systemctl restart sshd
-
 ##
 #--------------------------------------------------
 # Update Server
@@ -65,7 +61,6 @@ echo -e "\n============== Update Server ======================="
 sudo apt update 
 sudo apt upgrade -y
 sudo apt autoremove -y
-
 #--------------------------------------------------
 # Set up the timezones
 #--------------------------------------------------
@@ -75,16 +70,13 @@ timedatectl
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 sudo dpkg-reconfigure locales
-
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
 sudo apt install -y postgresql
 sudo systemctl start postgresql && sudo systemctl enable postgresql
-
 echo -e "\n=============== Creating the ODOO PostgreSQL User ========================="
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
-
 #--------------------------------------------------
 # Install Python Dependencies
 #--------------------------------------------------
@@ -92,24 +84,18 @@ echo -e "\n=================== Installing Python Dependencies ==================
 sudo apt install -y git python3 python3-dev python3-pip build-essential wget python3-venv python3-wheel python3-cffi libxslt-dev  \
 libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev gdebi libatlas-base-dev libblas-dev liblcms2-dev \
 zlib1g-dev libjpeg8-dev libxrender1
-
 # install libssl
 sudo apt -y install libssl-dev
-
 #--------------------------------------------------
 # Install Python pip Dependencies
 #--------------------------------------------------
 echo -e "\n=================== Installing Python pip Dependencies ============================"
 sudo apt install -y libpq-dev libxml2-dev libxslt1-dev libffi-dev
-
 echo -e "\n================== Install Wkhtmltopdf ============================================="
 sudo apt install -y xfonts-75dpi xfonts-encodings xfonts-utils xfonts-base fontconfig
-
 echo -e "\n================== Install python packages/requirements ============================"
 sudo pip3 install --upgrade pip
 sudo pip3 install setuptools wheel
-
-
 echo -e "\n=========== Installing nodeJS NPM and rtlcss for LTR support =================="
 sudo curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs npm -y
@@ -117,12 +103,10 @@ sudo npm install -g --upgrade npm
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 sudo npm install -g less less-plugin-clean-css
 sudo npm install -g rtlcss node-gyp
-
 sudo apt-get install node-clean-css -y
 sudo apt-get install node-less -y
 sudo apt-get install python-gevent -y
 apt-get install libwww-perl -y
-
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
 #--------------------------------------------------
@@ -133,7 +117,6 @@ echo -e "\n---- Install wkhtmltopdf and place shortcuts on correct place for ODO
 ## in order to have correct version of wkhtmltopdf installed, for a danger note refer to
 ## https://github.com/odoo/odoo/wiki/Wkhtmltopdf ):
 ## https://www.odoo.com/documentation/16.0/setup/install.html#debian-ubuntu
-
   sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb 
   sudo dpkg -i wkhtmltox_0.12.6.1-2.jammy_amd64.deb
   sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
@@ -141,17 +124,14 @@ echo -e "\n---- Install wkhtmltopdf and place shortcuts on correct place for ODO
    else
   echo "Wkhtmltopdf isn't installed due to the choice of the user!"
   fi
-  
+
 echo -e "\n============== Create ODOO system user ========================"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
-
 #The user should also be added to the sudo'ers group.
 sudo adduser $OE_USER sudo
-
 echo -e "\n=========== Create Log directory ================"
 sudo mkdir /var/log/$OE_USER
 sudo chown -R $OE_USER:$OE_USER /var/log/$OE_USER
-
 #--------------------------------------------------
 # Install Odoo from source
 #--------------------------------------------------
@@ -165,7 +145,6 @@ if [ $IS_ENTERPRISE = "True" ]; then
     sudo ln -s /usr/bin/nodejs /usr/bin/node
     sudo su $OE_USER -c "mkdir $OE_HOME/enterprise"
     sudo su $OE_USER -c "mkdir $OE_HOME/enterprise/addons"
-
     GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
     while [[ $GITHUB_RESPONSE == *"Authentication"* ]]; do
         echo "\n============== WARNING ====================="
@@ -176,23 +155,18 @@ if [ $IS_ENTERPRISE = "True" ]; then
         echo " "
         GITHUB_RESPONSE=$(sudo git clone --depth 1 --branch $OE_VERSION https://www.github.com/odoo/enterprise "$OE_HOME/enterprise/addons" 2>&1)
     done
-
     echo -e "\n========= Added Enterprise code under $OE_HOME/enterprise/addons ========="
     echo -e "\n============= Installing Enterprise specific libraries ============"
     sudo -H pip3 install num2words ofxparse dbfread ebaysdk firebase_admin pyOpenSSL
     sudo npm install -g less-plugin-clean-css
 fi
-
 echo -e "\n========= Create custom module directory ============"
 sudo su $OE_USER -c "mkdir $OE_HOME/extra"
 sudo su $OE_USER -c "mkdir $OE_HOME/extra/addons"
-
 echo -e "\n======= Setting permissions on home folder =========="
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/
-
 echo -e "\n========== Create server config file ============="
 sudo touch /etc/odoo/${OE_CONFIG}.conf
-
 echo -e "\n============= Creating server config file ==========="
 sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/odoo/${OE_CONFIG}.conf"
 if [ $GENERATE_RANDOM_PASSWORD = "True" ]; then
@@ -212,131 +186,73 @@ if [ $IS_ENTERPRISE = "True" ]; then
 else
     sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/odoo/${OE_CONFIG}.conf"
 fi
-    sudo su root -c "printf 'csv_internal_sep = ,\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'data_dir = /opt/odoo/.local/share/Odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_host = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_maxconn = 64\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_name = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_password = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_port = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_sslmode = prefer\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_template = template0\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'db_user = odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'dbfilter = ^%h$\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'demo = {}\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'email_from = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'geoip_database = /usr/share/GeoIP/GeoLite2-City.mmdb\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'http_enable = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'http_interface = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'import_partial = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_memory_hard = 1677721600\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_memory_soft = 629145600\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_request = 8192\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_time_cpu = 600\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_time_real = 1200\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'limit_time_real_cron = -1\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'list_db = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'log_db = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'log_db_level = warning\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'log_handler = :INFO\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'log_level = info\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'longpolling_port = 8072\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'max_cron_threads = 2\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'osv_memory_age_limit = 1.0\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'osv_memory_count_limit = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'pg_path = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'pidfile = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'proxy_mode = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'reportgz = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'screencasts = /None\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'screenshots = /tmp/odoo_tests\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'server_wide_modules = base,web\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'smtp_password = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'smtp_port = 25\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'smtp_server = localhost\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'smtp_ssl = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'smtp_user = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'syslog = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'test_enable = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'test_file = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'test_tags = None\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'translate_modules = ['all']\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'unaccent = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'upgrade_path = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'upgrades_paths = \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'without_demo = False \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-    sudo su root -c "printf 'workers = 4 \n' >> /etc/odoo/${OE_CONFIG}.conf"
-fi
-
+sudo su root -c "printf 'csv_internal_sep = ,\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'data_dir = /opt/odoo/.local/share/Odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_host = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_maxconn = 64\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_name = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_password = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_port = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_sslmode = prefer\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_template = template0\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_user = odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'dbfilter = ^%h$\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'demo = {}\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'email_from = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'geoip_database = /usr/share/GeoIP/GeoLite2-City.mmdb\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'http_enable = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'http_interface = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'import_partial = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_memory_hard = 1677721600\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_memory_soft = 629145600\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_request = 8192\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_time_cpu = 600\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_time_real = 1200\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'limit_time_real_cron = -1\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'list_db = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'log_db = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'log_db_level = warning\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'log_handler = :INFO\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'log_level = info\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'longpolling_port = 8072\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'max_cron_threads = 2\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'osv_memory_age_limit = 1.0\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'osv_memory_count_limit = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'pg_path = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'pidfile = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'proxy_mode = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'reportgz = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'screencasts = /None\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'screenshots = /tmp/odoo_tests\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'server_wide_modules = base,web\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'smtp_password = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'smtp_port = 25\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'smtp_server = localhost\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'smtp_ssl = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'smtp_user = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'syslog = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'test_enable = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'test_file = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'test_tags = None\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'translate_modules = ['all']\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'unaccent = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'upgrade_path = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'upgrades_paths = \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'without_demo = False \n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'workers = 4 \n' >> /etc/odoo/${OE_CONFIG}.conf"
 # echo -e "\n======== Adding Enterprise or custom modules ============="
 if [ $IS_ENTERPRISE = "True" ]; then
   #### upgrade odoo community to enterprise edition ####
   # Odoo 15: https://www.soladrive.com/downloads/enterprise-15.0.tar.gz
-  
-  echo -e "\n======== Adding some enterprise modules ============="
+    echo -e "\n======== Adding some enterprise modules ============="
   wget https://www.soladrive.com/downloads/enterprise-15.0.tar.gz
   tar -zxvf enterprise-15.0.tar.gz
   cp -rf odoo-15.0*/odoo/addons/* ${OE_HOME}/enterprise/addons
   rm enterprise-15.0.tar.gz
   chown -R $OE_USER:$OE_USER ${OE_HOME}/
 fi
-
 sudo chown $OE_USER:$OE_USER /etc/odoo/${OE_CONFIG}.conf
 sudo chmod 640 /etc/odoo/${OE_CONFIG}.conf
-
 #--------------------------------------------------
 # Adding Odoo as a deamon (Systemd)
 #--------------------------------------------------
@@ -362,14 +278,11 @@ EOF
 
 sudo chmod 755 /lib/systemd/system/$OE_USER.service
 sudo chown root: /lib/systemd/system/$OE_USER.service
-
 echo -e "\n======== Odoo startup File ============="
 sudo systemctl daemon-reload
 sudo systemctl enable --now $OE_USER.service
 sudo systemctl start $OE_USER.service
-
 sudo systemctl restart $OE_USER.service
-
 #--------------------------------------------------
 # Install Nginx if needed
 #--------------------------------------------------
@@ -453,19 +366,16 @@ server {
 }
  
 EOF
-
   sudo mv ~/odoo /etc/nginx/sites-available/
   sudo ln -s /etc/nginx/sites-available/$OE_USER /etc/nginx/sites-enabled/$OE_USER
   sudo rm /etc/nginx/sites-enabled/default
   sudo rm /etc/nginx/sites-available/default
-  
   sudo systemctl reload nginx
   sudo su root -c "printf 'proxy_mode = True\n' >> /etc/odoo/${OE_CONFIG}.conf"
   echo "Done! The Nginx server is up and running. Configuration can be found at /etc/nginx/sites-available/$OE_USER"
 else
   echo "\n===== Nginx isn't installed due to choice of the user! ========"
 fi
-
 #--------------------------------------------------
 # Enable ssl with certbot
 #--------------------------------------------------
@@ -481,7 +391,6 @@ if [ $INSTALL_NGINX = "True" ] && [ $ENABLE_SSL = "True" ]  && [ $WEBSITE_NAME !
 else
   echo "\n==== SSL/HTTPS isn't enabled due to choice of the user or because of a misconfiguration! ======"
 fi
-
 echo -e "\n================ webmin ======================="
 apt-get install -y perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python
 wget https://download.webmin.com/jcameron-key.asc
@@ -489,12 +398,10 @@ apt-key add jcameron-key.asc
 apt-get install apt-transport-https -y
 apt-get update
 apt-get install webmin -y
-
 #--------------------------------------------------
 # UFW Firewall
 #--------------------------------------------------
 sudo apt install -y ufw 
-
 sudo ufw allow 'Nginx Full'
 sudo ufw allow 'Nginx HTTP'
 sudo ufw allow 'Nginx HTTPS'
@@ -504,7 +411,6 @@ sudo ufw allow 6010/tcp
 sudo ufw allow 8069/tcp
 sudo ufw allow 8072/tcp
 sudo ufw enable 
-
 echo -e "\n================== Status of Odoo Service ============================="
 sudo systemctl status $OE_USER
 echo "\n========================================================================="
@@ -521,4 +427,7 @@ echo "Restart Odoo service: sudo systemctl restart $OE_USER"
 if [ $INSTALL_NGINX = "True" ]; then
   echo "Nginx configuration file: /etc/nginx/sites-available/$OE_USER"
 fi
+echo "-----------------------------------------------------------"
+echo "Done! The Odoo production platform is ready:"
+echo "Restart restart ur computer and start developing and have fun ;)"
 echo -e "\n========================================================================="
