@@ -86,6 +86,7 @@ libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev gd
 zlib1g-dev libjpeg8-dev libxrender1
 # install libssl
 sudo apt -y install libssl-dev
+sudo mkdir /opt/odoo
 #--------------------------------------------------
 # Install Python pip Dependencies
 #--------------------------------------------------
@@ -181,11 +182,10 @@ else
     sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/odoo/${OE_CONFIG}.conf"
 fi
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/odoo/${OE_CONFIG}.conf"
-
 if [ $IS_ENTERPRISE = "True" ]; then
-    sudo su root -c "printf 'addons_path=${OE_HOME}/enterprise/addons,${OE_HOME_EXT}/addons\n' >> /etc/odoo/${OE_CONFIG}.conf"
+    sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/extra,${OE_HOME}/enterprise\n' >> /etc/odoo/${OE_CONFIG}.conf"
 else
-    sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/custom/addons\n' >> /etc/odoo/${OE_CONFIG}.conf"
+    sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/extra\n' >> /etc/odoo/${OE_CONFIG}.conf"
 fi
 sudo su root -c "printf 'csv_internal_sep = ,\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'data_dir = /opt/odoo/.local/share/Odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
@@ -197,7 +197,7 @@ sudo su root -c "printf 'db_port = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'db_sslmode = prefer\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'db_template = template0\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'db_user = odoo\n' >> /etc/odoo/${OE_CONFIG}.conf"
-sudo su root -c "printf 'dbfilter = ^%h$\n' >> /etc/odoo/${OE_CONFIG}.conf"
+sudo su root -c "printf 'dbfilter = ^%h$ \n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'demo = {}\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'email_from = False\n' >> /etc/odoo/${OE_CONFIG}.conf"
 sudo su root -c "printf 'geoip_database = /usr/share/GeoIP/GeoLite2-City.mmdb\n' >> /etc/odoo/${OE_CONFIG}.conf"
