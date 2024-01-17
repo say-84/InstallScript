@@ -189,6 +189,9 @@ echo -e "\n========== Create server config file ============="
 sudo mkdir /etc/odoo
 sudo touch /etc/odoo/${OE_CONFIG}.conf
 
+echo -e "\n============= Creating server config file ==========="
+sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/odoo/${OE_CONFIG}.conf"
+if [ $GENERATE_RANDOM_PASSWORD = "True" ]; then
     echo -e "\n========= Generating random admin password ==========="
     OE_SUPERADMIN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
 fi
@@ -199,6 +202,7 @@ else
     sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/odoo/${OE_CONFIG}.conf"
 fi
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/odoo/${OE_CONFIG}.conf"
+
 if [ $IS_ENTERPRISE = "True" ]; then
     sudo su root -c "printf 'addons_path=${OE_HOME_EXT}/addons,${OE_HOME}/extra,${OE_HOME}/enterprise\n' >> /etc/odoo/${OE_CONFIG}.conf"
 else
