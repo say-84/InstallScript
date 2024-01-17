@@ -65,7 +65,7 @@ echo -e "\n============== Update Server ======================="
 sudo apt update 
 sudo apt upgrade -y
 sudo apt autoremove -y
-
+apt install -y zip gdebi net-tools
 #--------------------------------------------------
 # Set up the timezones
 #--------------------------------------------------
@@ -74,7 +74,7 @@ timedatectl set-timezone Asia/Riyadh
 timedatectl
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
-sudo dpkg-reconfigure locales
+# sudo dpkg-reconfigure locales
 
 #--------------------------------------------------
 # Install PostgreSQL Server
@@ -138,7 +138,8 @@ echo -e "\n---- Install wkhtmltopdf and place shortcuts on correct place for ODO
   fi
   
 echo -e "\n============== Create ODOO system user ========================"
-sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
+sudo adduser --system --quiet --shell=/bin/bash --home=$OE_USER --gecos 'ODOO' --group $OE_USER
+#useradd --create-home -d /home/$OE_USER --shell /bin/bash -g $OE_USER $OE_USER
 
 #The user should also be added to the sudo'ers group.
 sudo adduser $OE_USER sudo
