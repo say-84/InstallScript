@@ -78,9 +78,26 @@ echo -e "\n--- Install other required packages"
 sudo apt-get install node-clean-css -y
 sudo apt-get install node-less -y
 sudo apt-get install python-gevent -y
-apt-get install libwww-perl -y
+sudo apt-get install libwww-perl -y
 #sudo apt install ifupdown -y
-
+sudo apt-get install python3-pypdf2 -y
+sudo pip install werkzeug -y
+sudo apt-get install python3-werkzeug -y
+sudo apt-get install python3-PIL -y
+sudo pip install Pillow -y
+sudo apt install python3-pip -y
+sudo pip install Pillow -y
+sudo apt install python3-reportlab -y
+sudo apt install python3-babel -y
+sudo apt install python3-passlib -y
+sudo apt install python3-lxml -y
+sudo apt install python3-decorator -y
+sudo apt install python3-polib -y
+sudo apt install python3-psycopg2 -y
+sudo apt install python3-dateutil -y
+sudo apt install python3-psutil -y
+sudo apt install python3-unidecode -y
+sudo apt install python3-openpyxl -y
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
