@@ -21,6 +21,7 @@
 ##fixed parameters
 #instead of odoo use ur user name .EG OE_USER="mahmoud"
 OE_USER="odoo"
+OE_HOME_EXT="/$OE_USER/${OE_USER}"
 OE_BRANCH="15.0"
 #The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
 #Set to true if you want to install it, false if you don't need it or have it already installed.
@@ -43,6 +44,11 @@ echo -e "\n---- Update Server ----"
 sudo apt-get update
 sudo apt-get upgrade -y
 apt install -y zip
+
+echo -e "\n=============== Create ODOO system user ========================="
+sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
+sudo adduser $OE_USER sudo
+
 echo "----------------------------localization-------------------------------"
 
 export LC_ALL="en_US.UTF-8"
@@ -63,7 +69,7 @@ sudo apt-get install postgresql-13 postgresql-server-dev-13 -y
 
 echo -e "\n---- Creating the ODOO PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $OE_USER" 2> /dev/null || true
-
+sudo su - postgres ALTER USER odoo WITH SUPERUSER;
 #--------------------------------------------------
 # Install Dependencies
 #--------------------------------------------------
@@ -98,8 +104,11 @@ sudo apt install python3-dateutil -y
 sudo apt install python3-psutil -y
 sudo apt install python3-unidecode -y
 sudo apt install python3-openpyxl -y
-python3 -m pip install pip --upgrade
-pip install pyopenssl --upgrade
+sudo python3 -m pip install pip --upgrade  -y
+sudo pip install pyopenssl --upgrade  -y
+sudo wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+sudo dpkg -i wkhtmltox_0.12.5-1.bionic_amd64.deb
+sudo apt install -f
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
