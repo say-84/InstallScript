@@ -98,6 +98,8 @@ sudo apt install python3-dateutil -y
 sudo apt install python3-psutil -y
 sudo apt install python3-unidecode -y
 sudo apt install python3-openpyxl -y
+python3 -m pip install pip --upgrade
+pip install pyopenssl --upgrade
 
 #--------------------------------------------------
 # Install Wkhtmltopdf if needed
